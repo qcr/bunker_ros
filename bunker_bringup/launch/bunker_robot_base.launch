@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="port_name" value="can0" />
+    <arg name="simulated_robot" value="false" />
+    <!--<arg name="model_xacro" default="$(find bunker_description)/urdf/bunker_v2.xacro" />-->
+    <arg name="odom_topic_name" default="odom" />
+    <arg name="is_bunker_mini" default="false" />
+    <arg name="pub_tf" default="true" />
+    
+    <!-- Robot Description Argumnets -->
+    <arg name="robot_state_pub_enabled" default="false" />
+
+    <include file="$(find bunker_base)/launch/bunker_base.launch">
+    	<arg name="is_bunker_mini" default="$(arg is_bunker_mini)" />
+        <arg name="port_name" default="$(arg port_name)" />
+        <arg name="simulated_robot" default="$(arg simulated_robot)" />
+        <arg name="odom_topic_name" default="$(arg odom_topic_name)" />
+        <arg name="pub_tf" default="$(arg pub_tf)" />
+    </include>
+    
+
+
+    <!-- Include Robot Description and Robot State Publisher if required  -->
+    <group if="$(arg robot_state_pub_enabled)">
+    	 <!-- Launch robot state publisher -->
+    <node  name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    
+    
+        <!-- Load URDF into robot description parameter - URDF is based on the is_scout_mini parameter -->
+        <param  name="robot_description"  command="$(find xacro)/xacro $(find bunker_description)/urdf/qcr_bunker.xacro" />
+        </group>
+
+</launch>
